@@ -5,17 +5,18 @@ import ReactPaginate from 'react-paginate'
 import swal from 'sweetalert'
 import Multiselect from 'multiselect-react-dropdown'
 import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react'
+import { CKEditor } from '@ckeditor/ckeditor5-react'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 
 const SocialMedia = () => {
   const navigate = useNavigate()
   const [socialMediaData, setSocialMediaData] = useState([])
-  // const [limit, setLimit] = useState(10)
   const [pageCount, setPageCount] = useState(0)
   const [perPage] = useState(5);
   const [page, setPage] = useState(1)
   const [masterPermission, setMasterpermission] = useState([])
-  const [showModal, setShowModal] = useState(false)
-  const [readMore, setReadMore] = useState(false)
+  // const [showModal, setShowModal] = useState(false)
+  // const [readMore, setReadMore] = useState(false)
   const [getWillUpdateData, setGetWillUpdateData] = useState([])
   const [visibleedit, setVisibleedit] = useState(false)
   const [editSocialMediaName, setEditSocialMediaName] = useState('')
@@ -23,7 +24,27 @@ const SocialMedia = () => {
   const [socialId, setSocialId] = useState('')
   const [status, setStatus] = useState(null)
 
-  const API = 'https://insuranceapi-3o5t.onrender.com/api'
+  const customConfig = {
+    toolbar: {
+      items: [
+        'heading', '|',
+        'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+        'indent', 'outdent', '|',
+        'blockQuote', 'insertTable', '|',
+        'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+        'alignment', 'code', 'highlight', 'horizontalLine', 
+        'pageBreak', 'specialCharacters', 'subscript', 'superscript', 'strikethrough', 'underline', '|',
+        'undo', 'redo'
+      ]
+    },
+    alignment: {
+      options: ['left', 'center', 'right', 'justify']
+    },
+    placeholder: 'Start typing here...'
+  };
+
+  // const API = 'https://insuranceapi-3o5t.onrender.com/api'
+  const API = 'http://localhost:8000/api'
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -47,7 +68,6 @@ const SocialMedia = () => {
         const pages = Math.ceil(slice)
         console.log(pages, 'pages')
         setPageCount(pages)
-        // console.log(res.data)
         setSocialMediaData(res.data)
       })
       .catch((e) => console.log(e))
@@ -55,18 +75,17 @@ const SocialMedia = () => {
 
   const editSocialMediaLink = async (id) => {
     await fetch(`${API}/socialMediaLink?id=${id}`, {
-      method: 'PUT',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then((res) => res.json())
       .then((res) => {
-        // console.log(res.data)
         setSocialId(id)
         setGetWillUpdateData(res.data)
-        setEditSocialMediaName(res.data.socialMediaName) // Set only if data is available
-        setEditSocialContent(res.data.contants) // Set only if data is available
+        setEditSocialMediaName(res.data.socialMediaName)
+        setEditSocialContent(res.data.contants)
         setVisibleedit(true)
       })
       .catch((e) => console.log(e))
@@ -125,45 +144,45 @@ const SocialMedia = () => {
     getSocialMediaLink(perPage, page)
   }
 
-  const addSocialMediaLink = async (e) => {
-    e.preventDefault()
-    console.log(editSocialContent, editSocialMediaName, status, 'check')
-    await fetch(`${API}/socialMediaLink`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        socialMediaName: editSocialMediaName,
-        contants: editSocialContent,
-        status: status,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == 201) {
-          setShowModal(false)
-          swal({
-            title: 'Wow!',
-            text: data.message,
-            type: 'success',
-            icon: 'success',
-          }).then(function () {
-            getSocialMediaLink(perPage, page)
-          })
-        } else {
-          setShowModal(false)
-          swal({
-            title: 'Error!',
-            text: data.message,
-            type: 'error',
-            icon: 'error',
-          }).then(function () {
-            getSocialMediaLink(perPage, page)
-          })
-        }
-      })
-  }
+  // const addSocialMediaLink = async (e) => {
+  //   e.preventDefault()
+  //   console.log(editSocialContent, editSocialMediaName, status, 'check')
+  //   await fetch(`${API}/socialMediaLink`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       socialMediaName: editSocialMediaName,
+  //       contants: editSocialContent,
+  //       status: status,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data.status == 201) {
+  //         setShowModal(false)
+  //         swal({
+  //           title: 'Wow!',
+  //           text: data.message,
+  //           type: 'success',
+  //           icon: 'success',
+  //         }).then(function () {
+  //           getSocialMediaLink(perPage, page)
+  //         })
+  //       } else {
+  //         setShowModal(false)
+  //         swal({
+  //           title: 'Error!',
+  //           text: data.message,
+  //           type: 'error',
+  //           icon: 'error',
+  //         }).then(function () {
+  //           getSocialMediaLink(perPage, page)
+  //         })
+  //       }
+  //     })
+  // }
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected
@@ -178,9 +197,9 @@ const SocialMedia = () => {
           <div className="card-header">
             <div className="row">
               <div className="col-md-6">
-                <h4 className="card-title">Social Media</h4>
+                <h4 className="card-title">Pages</h4>
               </div>
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 {masterPermission.social_media_link?.includes('create') ? (
                   <button
                     className="btn btn-primary"
@@ -192,132 +211,123 @@ const SocialMedia = () => {
                 ) : (
                   ''
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
 
           <div className="card-body">
-            <table className="table table-bordered yatchplanss123">
-              <thead className="thead-dark">
-                <tr className="table-info">
-                  <th scope="col">#</th>
-
-                  <th scope="col">Social Media Name</th>
-                  <th scope="col">Content</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {socialMediaData?.length > 0 ? (
-                  socialMediaData.map((item, index) => (
-                    <tr key={index}>
-                      <td>{startFrom + index + 1}</td>
-                      <td>{item.socialMediaName}</td>
-                      {/* <td>
-                        {readMore ? (
-                          <>{item.contants} </>
-                        ) : (
-                          <>{item.contants.substring(0, 1000)} </>
-                        )}
-                        <Button className="btn" onClick={() => setReadMore(!readMore)}>
-                          {readMore ? 'show less' : '  read more'}
-                        </Button>
-                      </td> */}
-                      <td className='text-wrap'>
-                        {readMore === index ? (
-                          <>
-                            {item.contants}{' '}
-                            <Button className="btn" onClick={() => setReadMore(null)}>
-                              show less
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            {item.contants.length > 1000
-                              ? item.contants.substring(0, 1000) + '...'
-                              : item.contants}{' '}
-                            {item.contants.length > 1000 && (
-                              <Button className="btn" onClick={() => setReadMore(index)}>
-                                read more
-                              </Button>
-                            )}
-                          </>
-                        )}
-                      </td>
-                      <td>{item.status == true ? 'Active' : 'Inactive'}</td>
-                      <td>
-                        {masterPermission.social_media_link?.includes('edit') && (
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => editSocialMediaLink(item._id)}
-                          >
-                            Edit
-                          </button>
-                        )}{' '}
-                        {masterPermission.social_media_link?.includes('delete') && (
-                          <>
-                            {item.status === true ? (
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => {
-                                  if (
-                                    window.confirm('Are you sure you wish to deactivate this item?')
-                                  )
-                                    updatestatus(item._id, false)
-                                }}
-                              >
-                                Deactivate
-                              </button>
-                            ) : (
-                              <button
-                                className="btn btn-success"
-                                onClick={() => {
-                                  if (
-                                    window.confirm('Are you sure you wish to activate this item?')
-                                  )
-                                    updatestatus(item._id, true)
-                                }}
-                              >
-                                Activate
-                              </button>
-                            )}
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
+            <div className="table-responsive">
+              <table className="table table-bordered">
+                <thead className="thead-dark">
                   <tr>
-                    <td colSpan="6">No Data Found</td>
+                    <th>#</th>
+                    <th>Page Name</th>
+                    {/* <th scope="col">Content</th>
+                    <th>Status</th> */}
+                    <th>Action</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-            <ReactPaginate
-              previousLabel={'Previous'}
-              nextLabel={'Next'}
-              breakLabel={'...'}
-              pageCount={pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={3}
-              onPageChange={handlePageClick}
-              containerClassName={'pagination justify-content-end'}
-              pageClassName={'page-item'}
-              pageLinkClassName={'page-link'}
-              previousClassName={'page-item'}
-              previousLinkClassName={'page-link'}
-              nextClassName={'page-item'}
-              nextLinkClassName={'page-link'}
-              breakClassName={'page-item'}
-              breakLinkClassName={'page-link'}
-              activeClassName={'active'}
-            />
+                </thead>
+                <tbody>
+                  {socialMediaData?.length > 0 ? (
+                    socialMediaData.map((item, index) => (
+                      <tr key={index}>
+                        <td>{startFrom + index + 1}</td>
+                        <td>{item.socialMediaName}</td>
+                        {/* <td className='text-wrap'>
+                          {readMore === index ? (
+                            <>
+                              {item.contants}{' '}
+                              <Button className="btn" onClick={() => setReadMore(null)}>
+                                show less
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              {item.contants.length > 1000
+                                ? item.contants.substring(0, 1000) + '...'
+                                : item.contants}{' '}
+                              {item.contants.length > 1000 && (
+                                <Button className="btn" onClick={() => setReadMore(index)}>
+                                  read more
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </td>
+                        <td>{item.status == true ? 'Active' : 'Inactive'}</td> */}
+                        <td>
+                          {masterPermission.social_media_link?.includes('edit') && (
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => editSocialMediaLink(item._id)}
+                            >
+                              Edit
+                            </button>
+                          )}{' '}
+                          {/* {masterPermission.social_media_link?.includes('delete') && (
+                            <>
+                              {item.status === true ? (
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => {
+                                    if (
+                                      window.confirm('Are you sure you wish to deactivate this item?')
+                                    )
+                                      updatestatus(item._id, false)
+                                  }}
+                                >
+                                  Deactivate
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn btn-success"
+                                  onClick={() => {
+                                    if (
+                                      window.confirm('Are you sure you wish to activate this item?')
+                                    )
+                                      updatestatus(item._id, true)
+                                  }}
+                                >
+                                  Activate
+                                </button>
+                              )}
+                            </>
+                          )} */}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6">No Data Found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+              <ReactPaginate
+                previousLabel={'Previous'}
+                nextLabel={'Next'}
+                breakLabel={'...'}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={3}
+                onPageChange={handlePageClick}
+                containerClassName={'pagination justify-content-end'}
+                pageClassName={'page-item'}
+                pageLinkClassName={'page-link'}
+                previousClassName={'page-item'}
+                previousLinkClassName={'page-link'}
+                nextClassName={'page-item'}
+                nextLinkClassName={'page-link'}
+                breakClassName={'page-item'}
+                breakLinkClassName={'page-link'}
+                activeClassName={'active'}
+              />
+            </div>
           </div>
         </div>
       </Container>
 
-      <Modal size="lg" show={showModal} onHide={() => setShowModal(false)}>
+      {/* <Modal size="lg" show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add Terms & Conditions</Modal.Title>
         </Modal.Header>
@@ -378,11 +388,11 @@ const SocialMedia = () => {
             Close
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
 
       <Modal size="lg" show={visibleedit} onHide={() => setVisibleedit(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Terms & Conditions</Modal.Title>
+          <Modal.Title>Edit Page</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="container">
@@ -391,12 +401,10 @@ const SocialMedia = () => {
                 <div className="card">
                   <div className="card-body">
                     <form method="PUT" onSubmit={(e) => updateSocialMediaLink(socialId, e)}>
-                      {/* {getWillUpdateData.length > 0 &&
-                        getWillUpdateData?.map((data, index1) => ( */}
                       <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-12 mb-4">
                           <label className="form-label">
-                            <strong>Edit Social Media Name</strong>
+                            <strong>Page Name</strong>
                           </label>
                           <input
                             className="form-control"
@@ -404,35 +412,35 @@ const SocialMedia = () => {
                             type="text"
                             defaultValue={getWillUpdateData?.socialMediaName}
                             onChange={(e) => setEditSocialMediaName(e.target.value)}
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">
-                            <strong>Edit Social Content</strong>
-                          </label>
-                          <textarea
-                            className="form-control"
-                            rows="3"
-                            name="content"
-                            placeholder="Enter Terms & Condition"
-                            defaultValue={getWillUpdateData?.contants}
-                            onChange={(e) => setEditSocialContent(e.target.value)}
+                            readOnly
                           />
                         </div>
                       </div>
-                      {/* ))} */}
+                      <div className='row'>
+                        <div className="col-md-12">
+                          <label className="form-label">
+                            <strong>Page Content</strong>
+                          </label>
+                          <CKEditor
+                            editor={ClassicEditor}
+                            data={getWillUpdateData?.contants}
+                            config={customConfig}
+                            onChange={(event, editor) => {
+                              const data = editor.getData();
+                              setEditSocialContent(data);
+                            }}
+                          />
+                        </div>
+                      </div>
                       <div className="row">
                         <div className="col-md-12">
-                          {/* {socialId.length > 0 && ( */}
                           <button
                             type="submit"
                             className="btn btn-primary mt-2 submit_all"
                             style={{ float: 'right' }}
-                          // onClick={(e) => updateSocialMediaLink(socialId,e)}
                           >
                             Submit
                           </button>
-                          {/* )} */}
                         </div>
                       </div>
                     </form>

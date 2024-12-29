@@ -615,7 +615,7 @@ const masterNavItems = [
   },
   master_permission.social_media_link?.includes('view') && {
     component: CNavItem,
-    name: 'Social Media',
+    name: 'Pages',
     to: '/Socialmedia',
   },
   master_permission.motor_claim_question?.includes('view') && {
