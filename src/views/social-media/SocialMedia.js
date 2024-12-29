@@ -43,8 +43,7 @@ const SocialMedia = () => {
     placeholder: 'Start typing here...'
   };
 
-  // const API = 'https://insuranceapi-3o5t.onrender.com/api'
-  const API = 'http://localhost:8000/api'
+  const API = 'https://insuranceapi-3o5t.onrender.com/api'
 
   useEffect(() => {
     const token = localStorage.getItem('token')
