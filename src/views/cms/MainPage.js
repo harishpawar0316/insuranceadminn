@@ -19,8 +19,9 @@ const MainPage = () => {
     const [know_more_content, setKnowMoreContent] = useState('');
     const [previewKnowMore, setPreviewKnowMore] = useState([]);
     const [howToReachUs, setHowToReachUs] = useState([]);
-
-
+    const [email, setEmail] = useState('');
+    const [callus, setCallus] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
 
     useEffect(() => {
         getMainPageData();
@@ -49,6 +50,9 @@ const MainPage = () => {
                     setKnowMoreHeader(mainpage?.know_more_header);
                     setKnowMoreContent(mainpage?.know_more_content);
                     setHowToReachUs(mainpage?.howToReachUs);
+                    setEmail(mainpage?.email);
+                    setCallus(mainpage?.callus);
+                    setWhatsapp(mainpage?.whatsapp);
                 })
                 .catch(error => {
                     console.error('There was an error!', error);
@@ -65,8 +69,6 @@ const MainPage = () => {
             });
         }
     }
-
-
 
     const customConfig = {
         toolbar: {
@@ -138,50 +140,9 @@ const MainPage = () => {
         setPreviewKnowMore(updatedPreviews);
     };
 
-
-
-
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // if (banner.length === 0) {
-            //     swal({
-            //         title: "Oops!",
-            //         text: "Please select a banner image",
-            //         icon: "error",
-            //     });
-            //     return;
-            // }
-
-            // if (insuranceDetailsBanner.length === 0) {
-            //     swal({
-            //         title: "Oops!",
-            //         text: "Please select a insurance details banner image",
-            //         icon: "error",
-            //     });
-            //     return;
-            // }
-
-            // if (knowMore.length === 0) {
-            //     swal({
-            //         title: "Oops!",
-            //         text: "Please select a know more image",
-            //         icon: "error",
-            //     });
-            //     return;
-            // }
-
-            // if (howToReachUs.length === 0) {
-            //     swal({
-            //         title: "Oops!",
-            //         text: "Please select a how to reach us image",
-            //         icon: "error",
-            //     });
-            //     return;
-            // }
-
             const formData = new FormData();
             banner.forEach(photo => {
                 if (photo instanceof File) {
@@ -207,18 +168,9 @@ const MainPage = () => {
             formData.append('know_more_header', know_more_header);
             formData.append('know_more_content', know_more_content);
             formData.append('howToReachUs', howToReachUs);
-
-
-
-
-
-
-            // formData.append('banner', banner);
-            // formData.append('insuranceDetailsBanner', insuranceDetailsBanner);
-            // formData.append('knowMore', knowMore);
-            // formData.append('howToReachUs', howToReachUs);
-
-            console.log(Array.from(formData));
+            formData.append('email', email);
+            formData.append('callus', callus);
+            formData.append('whatsapp', whatsapp);
 
             const requestOptions = {
                 method: 'PUT',
@@ -237,7 +189,6 @@ const MainPage = () => {
                         text: "Main page updated successfully",
                         icon: "success",
                     });
-                    // navigate('/cms/main-page');
                 })
                 .catch(error => {
                     console.error('There was an error!', error);
@@ -247,7 +198,6 @@ const MainPage = () => {
                         icon: "error",
                     });
                 });
-
         } catch (error) {
             console.error('There was an error!', error);
             swal({
@@ -256,9 +206,6 @@ const MainPage = () => {
                 icon: "error",
             });
         }
-
-
-
     }
 
     return (
@@ -596,7 +543,75 @@ const MainPage = () => {
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
+                    
+                    <Accordion className="container mb-5">
+                        <Accordion.Item >
+                            <Accordion.Header>
+                                <div className="card-header new_leads">
+                                    <strong>Email</strong>
+                                </div>
+                            </Accordion.Header>
+                            <Accordion.Body className="scrollavcds" style={{ padding: '2px' }}>
+                                <div className="card mb-5">
+                                    <div className='container'>
+                                        <div className='row'>
+                                            <div className='col-md-12'>
+                                                <div className="form-group mb-3">
+                                                    <input type="text" className="form-control" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
 
+                    <Accordion className="container mb-5">
+                        <Accordion.Item >
+                            <Accordion.Header>
+                                <div className="card-header new_leads">
+                                    <strong>Call Us</strong>
+                                </div>
+                            </Accordion.Header>
+                            <Accordion.Body className="scrollavcds" style={{ padding: '2px' }}>
+                                <div className="card mb-5">
+                                    <div className='container'>
+                                        <div className='row'>
+                                            <div className='col-md-12'>
+                                                <div className="form-group mb-3">
+                                                    <input type="text" className="form-control" name="callus" value={callus} onChange={(e) => setCallus(e.target.value)} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+
+                    <Accordion className="container mb-5">
+                        <Accordion.Item >
+                            <Accordion.Header>
+                                <div className="card-header new_leads">
+                                    <strong>Whatsapp</strong>
+                                </div>
+                            </Accordion.Header>
+                            <Accordion.Body className="scrollavcds" style={{ padding: '2px' }}>
+                                <div className="card mb-5">
+                                    <div className='container'>
+                                        <div className='row'>
+                                            <div className='col-md-12'>
+                                                <div className="form-group mb-3">
+                                                    <input type="text" className="form-control" name="whatsapp" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
                 </div>
                 <div className="card-footer">
                     <button className="btn btn-outline-success" style={{ float: "right" }} onClick={handleSubmit}>
